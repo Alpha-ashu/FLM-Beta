@@ -1,0 +1,9 @@
+{
+  "name": "FLM Financial Manager",
+  "short_name": "FLM",
+  "description": "Complete financial management platform with expense tracking, investment management, and social collaboration",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#667eea"
+}

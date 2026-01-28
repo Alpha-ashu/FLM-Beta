@@ -1,0 +1,6 @@
+{
+	"appId": "com.flm.financialmanager",
+	"appName": "FLM - Financial Life Manager",
+	"webDir": "dist",
+	"packageClassList": []
+}
