@@ -1,1 +1,8 @@
-{"projectId":"prj_lu1bVsNhpTeuWOI2E1c6MaB9WWP2","orgId":"team_DYylFSbcLCRvV0EFSEwdjKY2","projectName":"financelife-app"}
+{
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build"
+    }
+  ]
+}
