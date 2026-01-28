@@ -1,0 +1,4 @@
+# Vercel ignore file to ensure npm is used instead of pnpm
+pnpm-lock.yaml
+.pnpm-store
+node_modules/.pnpm
