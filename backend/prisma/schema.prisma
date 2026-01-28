@@ -1,0 +1,603 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String       @id @default(cuid())
+  email           String       @unique
+  name            String?
+  password        String
+  role            UserRole     @default(USER)
+  avatar          String?
+  currency        Currency     @default(USD)
+  language        Language     @default(EN)
+  isActive        Boolean      @default(true)
+  lastLogin       DateTime?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  // Relationships
+  accounts        Account[]
+  transactions    Transaction[]
+  budgets         Budget[]
+  goals           Goal[]
+  loans           Loan[]
+  investments     Investment[]
+  friends         Friend[]
+  friendRequests  FriendRequest[]
+  groups          Group[]
+  groupMembers    GroupMember[]
+  settlements     Settlement[]
+  notifications   Notification[]
+  settings        UserSetting?
+  advisorClients  AdvisorClient[]
+  reviews         Review[]
+  bookings        Booking[]
+
+  // Advisor specific
+  isAdvisor       Boolean      @default(false)
+  advisorProfile  AdvisorProfile?
+  clients         Client[]
+  consultations Consultation[]
+
+  @@map("users")
+}
+
+model Account {
+  id              String       @id @default(cuid())
+  name            String
+  type            AccountType
+  balance         Float        @default(0)
+  currency        Currency
+  bankName        String?
+  accountNumber   String?
+  isActive        Boolean      @default(true)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  // Relationships
+  userId          String
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions    Transaction[]
+
+  @@map("accounts")
+}
+
+model Transaction {
+  id              String        @id @default(cuid())
+  description     String
+  amount          Float
+  type            TransactionType
+  category        TransactionCategory
+  date            DateTime
+  currency        Currency
+  isRecurring     Boolean       @default(false)
+  recurrenceRule  String?
+  notes           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Relationships
+  userId          String
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId       String?
+  account         Account?      @relation(fields: [accountId], references: [id], onDelete: SetNull)
+  categoryId      String?
+  categoryObj     Category?     @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  groupId         String?
+  group           Group?        @relation(fields: [groupId], references: [id], onDelete: SetNull)
+
+  @@map("transactions")
+}
+
+model Category {
+  id              String       @id @default(cuid())
+  name            String
+  type            CategoryType
+  color           String?
+  icon            String?
+  isCustom        Boolean      @default(true)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  // Relationships
+  userId          String?
+  user            User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  transactions    Transaction[]
+
+  @@map("categories")
+}
+
+model Budget {
+  id              String       @id @default(cuid())
+  name            String
+  amount          Float
+  spent           Float        @default(0)
+  currency        Currency
+  period          BudgetPeriod
+  startDate       DateTime
+  endDate         DateTime
+  isActive        Boolean      @default(true)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  // Relationships
+  userId          String
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categoryId      String?
+  category        Category?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  @@map("budgets")
+}
+
+model Goal {
+  id              String       @id @default(cuid())
+  name            String
+  description     String?
+  targetAmount    Float
+  currentAmount   Float        @default(0)
+  currency        Currency
+  deadline        DateTime?
+  priority        GoalPriority @default(MEDIUM)
+  status          GoalStatus   @default(IN_PROGRESS)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  // Relationships
+  userId          String
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("goals")
+}
+
+model Loan {
+  id              String       @id @default(cuid())
+  name            String
+  principal       Float
+  interestRate    Float
+  loanType        LoanType
+  startDate       DateTime
+  endDate         DateTime?
+  monthlyPayment  Float
+  remainingAmount Float
+  currency        Currency
+  isActive        Boolean      @default(true)
+  hasNotifications Boolean     @default(true)
+  notificationDays Int         @default(3)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  // Relationships
+  userId          String
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("loans")
+}
+
+model Investment {
+  id              String           @id @default(cuid())
+  name            String
+  type            InvestmentType
+  amount          Float
+  currentValue    Float?
+  currency        Currency
+  purchaseDate    DateTime
+  purchasePrice   Float
+  currentPrice    Float?
+  isActive        Boolean        @default(true)
+  riskLevel       RiskLevel      @default(MEDIUM)
+  notes           String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  // Relationships
+  userId          String
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("investments")
+}
+
+model Friend {
+  id              String       @id @default(cuid())
+  status          FriendStatus @default(PENDING)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  // Relationships
+  userId          String
+  user            User         @relation("UserFriends", fields: [userId], references: [id], onDelete: Cascade)
+  friendId        String
+  friend          User         @relation("UserFriends", fields: [friendId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, friendId])
+  @@map("friends")
+}
+
+model FriendRequest {
+  id              String           @id @default(cuid())
+  status          RequestStatus    @default(PENDING)
+  message         String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  // Relationships
+  senderId        String
+  sender          User             @relation("SentRequests", fields: [senderId], references: [id], onDelete: Cascade)
+  receiverId      String
+  receiver        User             @relation("ReceivedRequests", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@unique([senderId, receiverId])
+  @@map("friend_requests")
+}
+
+model Group {
+  id              String       @id @default(cuid())
+  name            String
+  description     String?
+  color           String?
+  icon            String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  // Relationships
+  creatorId       String
+  creator         User         @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  members         GroupMember[]
+  transactions    Transaction[]
+
+  @@map("groups")
+}
+
+model GroupMember {
+  id              String       @id @default(cuid())
+  role            GroupRole    @default(MEMBER)
+  joinedAt        DateTime     @default(now())
+
+  // Relationships
+  groupId         String
+  group           Group        @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+  @@map("group_members")
+}
+
+model Settlement {
+  id              String       @id @default(cuid())
+  amount          Float
+  currency        Currency
+  description     String?
+  settledAt       DateTime     @default(now())
+  createdAt       DateTime     @default(now())
+
+  // Relationships
+  fromUserId      String
+  fromUser        User         @relation("SettlementFrom", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUserId        String
+  toUser          User         @relation("SettlementTo", fields: [toUserId], references: [id], onDelete: Cascade)
+  groupId         String?
+  group           Group?       @relation(fields: [groupId], references: [id], onDelete: SetNull)
+
+  @@map("settlements")
+}
+
+model Notification {
+  id              String           @id @default(cuid())
+  title           String
+  message         String
+  type            NotificationType
+  isRead          Boolean          @default(false)
+  priority        NotificationPriority @default(NORMAL)
+  createdAt       DateTime         @default(now())
+
+  // Relationships
+  userId          String
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model UserSetting {
+  id              String       @id @default(cuid())
+  theme           Theme        @default(LIGHT)
+  currency        Currency     @default(USD)
+  language        Language     @default(EN)
+  notifications   Boolean      @default(true)
+  emailNotifications Boolean   @default(true)
+  pushNotifications Boolean    @default(true)
+  biometricAuth   Boolean      @default(false)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  // Relationships
+  userId          String       @unique
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_settings")
+}
+
+model AdvisorProfile {
+  id              String       @id @default(cuid())
+  bio             String?
+  expertise       String[]
+  experience      Int
+  education       String?
+  certifications  String[]
+  rating          Float        @default(0)
+  reviewCount     Int          @default(0)
+  consultationFee Float?
+  currency        Currency
+  availability    Json?
+  isVerified      Boolean      @default(false)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  // Relationships
+  userId          String       @unique
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  clients         Client[]
+  reviews         Review[]
+  consultations Consultation[]
+
+  @@map("advisor_profiles")
+}
+
+model Client {
+  id              String       @id @default(cuid())
+  status          ClientStatus @default(ACTIVE)
+  notes           String?
+  lastContact     DateTime?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  // Relationships
+  advisorId       String
+  advisor         User         @relation("AdvisorClients", fields: [advisorId], references: [id], onDelete: Cascade)
+  clientId        String
+  client          User         @relation("ClientAdvisors", fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@unique([advisorId, clientId])
+  @@map("clients")
+}
+
+model Review {
+  id              String       @id @default(cuid())
+  rating          Int
+  comment         String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  // Relationships
+  advisorId       String
+  advisor         User         @relation("AdvisorReviews", fields: [advisorId], references: [id], onDelete: Cascade)
+  reviewerId      String
+  reviewer        User         @relation("ReviewerReviews", fields: [reviewerId], references: [id], onDelete: Cascade)
+
+  @@unique([advisorId, reviewerId])
+  @@map("reviews")
+}
+
+model Booking {
+  id              String       @id @default(cuid())
+  date            DateTime
+  duration        Int          // in minutes
+  status          BookingStatus @default(PENDING)
+  notes           String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  // Relationships
+  advisorId       String
+  advisor         User         @relation("AdvisorBookings", fields: [advisorId], references: [id], onDelete: Cascade)
+  clientId        String
+  client          User         @relation("ClientBookings", fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@map("bookings")
+}
+
+model Consultation {
+  id              String       @id @default(cuid())
+  date            DateTime
+  duration        Int          // in minutes
+  status          ConsultationStatus @default(SCHEDULED)
+  notes           String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  // Relationships
+  advisorId       String
+  advisor         User         @relation("AdvisorConsultations", fields: [advisorId], references: [id], onDelete: Cascade)
+  clientId        String
+  client          User         @relation("ClientConsultations", fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@map("consultations")
+}
+
+// Enums
+enum UserRole {
+  USER
+  ADVISOR
+  ADMIN
+}
+
+enum Currency {
+  USD
+  EUR
+  GBP
+  JPY
+  CAD
+  AUD
+  INR
+}
+
+enum Language {
+  EN
+  ES
+  FR
+  DE
+  IT
+  PT
+  RU
+  ZH
+  JA
+  KO
+}
+
+enum AccountType {
+  CHECKING
+  SAVINGS
+  CREDIT
+  INVESTMENT
+  CASH
+  LOAN
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+  TRANSFER
+}
+
+enum TransactionCategory {
+  FOOD
+  TRANSPORTATION
+  SHOPPING
+  BILLS
+  ENTERTAINMENT
+  HEALTH
+  EDUCATION
+  TRAVEL
+  GROCERIES
+  RENT
+  SALARY
+  FREELANCE
+  INVESTMENT
+  OTHER
+}
+
+enum CategoryType {
+  INCOME
+  EXPENSE
+  BOTH
+}
+
+enum BudgetPeriod {
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  YEARLY
+}
+
+enum GoalPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum GoalStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum LoanType {
+  PERSONAL
+  MORTGAGE
+  AUTO
+  STUDENT
+  CREDIT_CARD
+}
+
+enum InvestmentType {
+  STOCKS
+  BONDS
+  MUTUAL_FUNDS
+  ETF
+  CRYPTOCURRENCY
+  REAL_ESTATE
+  SAVINGS
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum FriendStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  BLOCKED
+}
+
+enum RequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+enum GroupRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+enum NotificationType {
+  PAYMENT_REMINDER
+  BUDGET_ALERT
+  GOAL_MILESTONE
+  WEEKLY_REPORT
+  MONTHLY_REPORT
+  UNUSUAL_SPENDING
+  FRIEND_REQUEST
+  GROUP_INVITE
+  SETTLEMENT_REQUEST
+  CONSULTATION_REMINDER
+  SYSTEM
+}
+
+enum NotificationPriority {
+  LOW
+  NORMAL
+  HIGH
+  CRITICAL
+}
+
+enum Theme {
+  LIGHT
+  DARK
+  SYSTEM
+}
+
+enum ClientStatus {
+  ACTIVE
+  INACTIVE
+  PENDING
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+enum ConsultationStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}

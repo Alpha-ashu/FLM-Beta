@@ -1,0 +1,203 @@
+/* Modern Utility Classes */
+@layer utilities {
+  /* Card styles with clean, solid colors */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+  }
+
+  .card:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+  }
+
+  .card-strong {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+  }
+
+  .card-strong:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .card-subtle {
+    background: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: all 0.2s ease;
+  }
+
+  .card-subtle:hover {
+    background: var(--card);
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Button styles with solid colors */
+  .btn-primary {
+    background: var(--primary);
+    color: var(--primary-foreground);
+    border: 1px solid var(--primary);
+    border-radius: var(--radius);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+  }
+
+  .btn-primary:hover {
+    background: color-mix(in oklab, var(--primary) 90%, black);
+    border-color: color-mix(in oklab, var(--primary) 90%, black);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+  }
+
+  .btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn-secondary {
+    background: var(--secondary);
+    color: var(--secondary-foreground);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: all 0.2s ease;
+  }
+
+  .btn-secondary:hover {
+    background: color-mix(in oklab, var(--secondary) 90%, black);
+    border-color: color-mix(in oklab, var(--secondary) 90%, black);
+  }
+
+  .btn-accent {
+    background: var(--accent);
+    color: var(--accent-foreground);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius);
+    transition: all 0.2s ease;
+  }
+
+  .btn-accent:hover {
+    background: color-mix(in oklab, var(--accent) 90%, black);
+    border-color: color-mix(in oklab, var(--accent) 90%, black);
+    transform: translateY(-1px);
+  }
+
+  .btn-destructive {
+    background: var(--destructive);
+    color: var(--destructive-foreground);
+    border: 1px solid var(--destructive);
+    border-radius: var(--radius);
+    transition: all 0.2s ease;
+  }
+
+  .btn-destructive:hover {
+    background: color-mix(in oklab, var(--destructive) 90%, black);
+    border-color: color-mix(in oklab, var(--destructive) 90%, black);
+    transform: translateY(-1px);
+  }
+
+  /* Border styles */
+  .border-subtle {
+    border: 1px solid var(--border);
+  }
+
+  .border-strong {
+    border: 2px solid var(--border);
+  }
+
+  /* Text styles */
+  .text-primary {
+    color: var(--primary);
+  }
+
+  .text-muted {
+    color: var(--muted-foreground);
+  }
+
+  .text-accent {
+    color: var(--accent);
+  }
+
+  /* Circular progress ring styles */
+  .progress-ring {
+    transform: rotate(-90deg);
+  }
+
+  .progress-ring-circle {
+    transition: stroke-dashoffset 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: 50% 50%;
+  }
+
+  /* Animations */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideInFromLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideInFromRight {
+    from {
+      opacity: 0;
+      transform: translateX(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  .animate-slide-left {
+    animation: slideInFromLeft 0.5s ease-out;
+  }
+
+  .animate-slide-right {
+    animation: slideInFromRight 0.5s ease-out;
+  }
+
+  /* Smooth transitions for all interactive elements */
+  button, a, .clickable {
+    transition: all 0.2s ease;
+  }
+
+  /* Focus visible styles for accessibility */
+  *:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Reduced motion for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

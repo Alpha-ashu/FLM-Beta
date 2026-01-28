@@ -1,0 +1,9 @@
+export declare const register: (req: any, res: any) => Promise<any>;
+export declare const login: (req: any, res: any) => Promise<any>;
+export declare const logout: (req: any, res: any) => Promise<void>;
+export declare const refreshToken: (req: any, res: any) => Promise<any>;
+export declare const forgotPassword: (req: any, res: any) => Promise<any>;
+export declare const resetPassword: (req: any, res: any) => Promise<void>;
+export declare const verifyEmail: (req: any, res: any) => Promise<void>;
+export declare const resendVerification: (req: any, res: any) => Promise<any>;
+//# sourceMappingURL=auth.d.ts.map
