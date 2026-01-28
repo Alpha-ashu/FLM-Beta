@@ -10,7 +10,9 @@
     "build:android": "npm run build && npx cap sync android",
     "build:ios": "npm run build && npx cap sync ios",
     "open:android": "npx cap open android",
-    "open:ios": "npx cap open ios"
+    "open:ios": "npx cap open ios",
+    "vercel-build": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@emotion/react": "11.14.0",
@@ -83,9 +85,14 @@
     "@capacitor/core": "^8.0.1",
     "@capacitor/ios": "^8.0.1",
     "@tailwindcss/vite": "4.1.12",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/file-saver": "^2.0.7",
+    "@types/jest": "^30.0.0",
     "@types/papaparse": "^5.5.2",
     "@vitejs/plugin-react": "4.7.0",
+    "gh-pages": "^6.3.0",
+    "jest": "^30.2.0",
     "jspdf-autotable": "^5.0.7",
     "tailwindcss": "4.1.12",
     "vite": "6.3.5"

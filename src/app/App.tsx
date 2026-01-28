@@ -303,9 +303,10 @@ export default function App(props: any) {
   
   if (!supabaseRef.current) {
     if (typeof window !== 'undefined' && !window.__supabaseClient) {
+      // Use the correct Supabase credentials
       window.__supabaseClient = createClient(
-        `https://${projectId}.supabase.co`,
-        publicAnonKey,
+        'https://khoklmuwfwyfhccqbdmf.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtob2tsbXV3Znd5ZmhjY3FiZG1mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1OTMwMzcsImV4cCI6MjA4NTE2OTAzN30.f3gv_g8N4ZUd5d-Zxuef9aEqmnsR70hIbu4RCbQkMTc',
         {
           auth: {
             persistSession: true,
