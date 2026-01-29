@@ -10,8 +10,7 @@
     "build:android": "npm run build && npx cap sync android",
     "build:ios": "npm run build && npx cap sync ios",
     "open:android": "npx cap open android",
-    "open:ios": "npx cap open ios",
-    "vercel-build": "npm run build"
+    "open:ios": "npx cap open ios"
   },
   "dependencies": {
     "@emotion/react": "11.14.0",

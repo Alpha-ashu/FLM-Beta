@@ -6,3 +6,4 @@ package-lock.json
 node_modules/.pnpm
 node_modules/.yarn
 node_modules/.cache
+backend/
