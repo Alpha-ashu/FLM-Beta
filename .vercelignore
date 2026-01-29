@@ -1,9 +1,0 @@
-# Vercel ignore file to ensure npm is used instead of other package managers
-pnpm-lock.yaml
-yarn.lock
-package-lock.json
-.pnpm-store
-node_modules/.pnpm
-node_modules/.yarn
-node_modules/.cache
-backend/
